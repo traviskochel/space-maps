@@ -1,6 +1,7 @@
 var React = require('react');
 var Firebase = require('firebase');
 var _ = require('underscore');
+var MapTile = require('./MapTile');
 
 var MapWrapper = React.createClass({
   getInitialState: function() {
@@ -10,7 +11,7 @@ var MapWrapper = React.createClass({
     };
   },
   componentDidMount: function() {
-    let db = new Firebase("https://sweltering-heat-7890.firebaseio.com/");
+    let db = new Firebase("https://space-maps.firebaseio.com/");
     let _this = this;
 
     db.on("value", function(snapshot) {
@@ -23,23 +24,14 @@ var MapWrapper = React.createClass({
   renderTiles: function(){
     if (this.state.mapData) {
       let tiles = [];
-
+      let width = 100 / this.state.mapData.max_cols;
       _.each(this.state.mapData.tiles, (tile) => {
-
-        let size = 100 / this.state.mapData.max_cols;
-
-        let style = {
-          backgroundColor: "rgba(256,0,0," + tile.gray_value + ")",
-          width: size + "%"
-        } 
-
         tiles.push(
-          <div 
-            className='map--tile'
-            style={style} 
-            key={tile.row + '-' + tile.col} >
-            <div className='map--tile-height-spacer' />
-          </div>
+          <MapTile
+            key={tile.row + '-' + tile.col} 
+            resolution={this.state.mapData.resolution}
+            width={width}
+            tile={tile} />
         );
       })
       return tiles;

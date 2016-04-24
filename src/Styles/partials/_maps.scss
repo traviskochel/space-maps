@@ -11,9 +11,15 @@ body {
   flex-flow: row wrap;
 }
 
-.map--tile {
+.map--tile, .map--pixel {
   position: relative;
 }
+
+.map--tile {
+  display: flex;
+  flex-flow: row wrap;
+}
+
 
 .map--tile-height-spacer {
   padding-bottom: 100%;
