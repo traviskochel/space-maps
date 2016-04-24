@@ -2,3 +2,19 @@ body {
   background-color: $color-dark;
   color: $color-light;
 }
+
+.map--wrapper {
+  @include clearfix;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.map--tile {
+  position: relative;
+}
+
+.map--tile-height-spacer {
+  padding-bottom: 100%;
+}

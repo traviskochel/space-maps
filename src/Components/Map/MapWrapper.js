@@ -1,36 +1,54 @@
-const React = require('react');
-const MapUtils = require('../../Utils/Map.js');
+var React = require('react');
+var Firebase = require('firebase');
+var _ = require('underscore');
 
-const MapWrapper = React.createClass({
-  getElevation: function(){
-    console.log('hi')
-    MapUtils.getElevation(20, 30);
-    // let lat = Number(document.getElementById('iLat').value);
-    // let lon = Number(document.getElementById('iLat').value)
+var MapWrapper = React.createClass({
+  getInitialState: function() {
+    return {
+      planet: 'mars',
+      mapData: null
+    };
+  },
+  componentDidMount: function() {
+    let db = new Firebase("https://sweltering-heat-7890.firebaseio.com/");
+    let _this = this;
+
+    db.on("value", function(snapshot) {
+      let data = _.findWhere(snapshot.val(), {planet: _this.state.planet});
+      _this.setState({
+        mapData: data
+      });
+    });
+  },
+  renderTiles: function(){
+    if (this.state.mapData) {
+      let tiles = [];
+
+      _.each(this.state.mapData.tiles, (tile) => {
+
+        let size = 100 / this.state.mapData.max_cols;
+
+        let style = {
+          backgroundColor: "rgba(256,0,0," + tile.gray_value + ")",
+          width: size + "%"
+        } 
+
+        tiles.push(
+          <div 
+            className='map--tile'
+            style={style} 
+            key={tile.row + '-' + tile.col} >
+            <div className='map--tile-height-spacer' />
+          </div>
+        );
+      })
+      return tiles;
+    }
   },
   render: function() {
     return (
-      <div>
-        <div>
-          lat: 
-          <input 
-            id="iLat" 
-            type="text" 
-            name="lat" 
-            value="0" />
-          lon: 
-          <input 
-            id="iLon" 
-            type="text" 
-            name="LastName" 
-            value="0" />
-          <button 
-            type="button" 
-            onClick={this.getElevation}>
-            getElevation
-          </button>
-        </div>
-        <img id="my-image" crossOrigin="anonymous" />
+      <div className="map--wrapper">
+        {this.renderTiles()}
       </div>
     );
   }
